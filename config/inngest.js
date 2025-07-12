@@ -1,4 +1,8 @@
 import { Inngest } from "inngest";
+import connectDB from "@/config/db";
+import Order from "@/models/Order";
+import User from "@/models/User";
+
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "quickcart-next" });
@@ -43,7 +47,6 @@ export const syncUserUpdation = inngest.createFunction(
     }
 );
 
-// Inngest Function to create user's order in database
 export const createUserOrder = inngest.createFunction(
     {
         id: 'create-user-order',
@@ -54,19 +57,31 @@ export const createUserOrder = inngest.createFunction(
     },
     { event: 'order/created' },
     async ({ events }) => {
-        const orders = events.map((event) => {
-            return {
-                userId: event.data.userId,
-                items: event.data.items,
-                amount: event.data.amount,
-                address: event.data.address,
-                date: event.data.date
-            };
-        });
+        try {
+            console.log("🔥 Inngest function triggered");
 
-        await connectDB();
-        await Order.insertMany(orders);
+            const orders = events.map((event) => {
+                console.log("📦 Event Data:", event.data);
+                return {
+                    userId: event.data.userId,
+                    items: event.data.items,
+                    amount: event.data.amount,
+                    address: event.data.address,
+                    date: event.data.date
+                };
+            });
 
-        return { success: true, processed: orders.length };
+            await connectDB();
+            console.log("✅ DB Connected");
+
+            await Order.insertMany(orders);
+            console.log("✅ Orders inserted:", orders.length);
+
+            return { success: true, processed: orders.length };
+
+        } catch (error) {
+            console.error("❌ Error in Inngest function:", error);
+            return { success: false, message: error.message };
+        }
     }
 );
