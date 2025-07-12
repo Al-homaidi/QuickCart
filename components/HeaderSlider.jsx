@@ -43,6 +43,7 @@ const HeaderSlider = () => {
     setCurrentSlide(index);
   };
 
+
   return (
     <div className="overflow-hidden relative w-full">
       <div
@@ -87,9 +88,8 @@ const HeaderSlider = () => {
           <div
             key={index}
             onClick={() => handleSlideChange(index)}
-            className={`h-2 w-2 rounded-full cursor-pointer ${
-              currentSlide === index ? "bg-orange-600" : "bg-gray-500/30"
-            }`}
+            className={`h-2 w-2 rounded-full cursor-pointer ${currentSlide === index ? "bg-orange-600" : "bg-gray-500/30"
+              }`}
           ></div>
         ))}
       </div>

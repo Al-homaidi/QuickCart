@@ -8,8 +8,10 @@ import { useClerk, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
 
-  const { isSeller, router, user } = useAppContext();
+  const { isSeller, router, user, getCartCount } = useAppContext();
   const { openSignIn } = useClerk();
+  const CartCount = getCartCount();
+
 
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-32 py-3 border-b border-gray-300 text-gray-700">
@@ -37,8 +39,10 @@ const Navbar = () => {
 
       </div>
 
-      <ul className="hidden md:flex items-center gap-4 ">
+      <ul className="hidden md:flex items-center gap-4 relative">
+
         <Image className="w-4 h-4" src={assets.search_icon} alt="search icon" />
+        {CartCount > 0 ? <span className="absolute px-1 top-[-6px] right-[-6px] bg-red-600 text-white text-[8px] rounded-full">{CartCount}</span> : ''}
         {user ?
           <UserButton>
             <UserButton.MenuItems>
